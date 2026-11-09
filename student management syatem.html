@@ -1,0 +1,968 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudentHub | Management System</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg:#f4f5fb;
+    --card:#ffffff;
+    --text:#20243a;
+    --muted:#858ba0;
+    --border:#e7e9f0;
+    --primary:#6958e8;
+    --light:#efedff;
+    --sidebar:#ffffff;
+}
+
+body.dark {
+    --bg:#111522;
+    --card:#1b2131;
+    --text:#f2f3fa;
+    --muted:#a1a7b9;
+    --border:#30364a;
+    --primary:#9586ff;
+    --light:#302b50;
+    --sidebar:#191f2e;
+}
+
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,sans-serif;
+}
+
+body {
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+
+.app { display:flex; min-height:100vh; }
+
+/* Sidebar */
+
+.sidebar {
+    width:240px;
+    background:var(--sidebar);
+    border-right:1px solid var(--border);
+    padding:28px 18px;
+    position:fixed;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:21px;
+    font-weight:800;
+    margin-bottom:55px;
+}
+
+.logo-icon {
+    background:var(--primary);
+    color:white;
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+}
+
+.logo span:last-child { color:var(--primary); }
+
+.menu-title {
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:1.5px;
+    margin:0 0 15px 10px;
+}
+
+nav { display:flex; flex-direction:column; gap:9px; }
+
+.nav-link {
+    padding:14px;
+    border-radius:9px;
+    text-decoration:none;
+    color:var(--muted);
+    font-size:13px;
+    font-weight:600;
+}
+
+.nav-link:hover,.nav-link.active {
+    background:var(--light);
+    color:var(--primary);
+}
+
+.sidebar-bottom {
+    margin-top:auto;
+    color:var(--muted);
+    font-size:11px;
+    padding:10px;
+}
+
+/* Main */
+
+.main {
+    margin-left:240px;
+    width:calc(100% - 240px);
+    padding:30px 35px;
+}
+
+.topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.topbar h1 { font-size:23px; }
+.topbar p { color:var(--muted); font-size:12px; margin-top:6px; }
+
+.actions { display:flex; gap:10px; }
+
+.btn {
+    padding:11px 16px;
+    border:0;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.primary { background:var(--primary); color:white; }
+.secondary {
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--text);
+}
+
+.theme-btn {
+    background:var(--card);
+    color:var(--text);
+    border:1px solid var(--border);
+    width:40px;
+    border-radius:9px;
+    font-size:18px;
+}
+
+/* Welcome */
+
+.welcome {
+    background:linear-gradient(110deg,#6253dc,#9788f4);
+    color:white;
+    border-radius:14px;
+    padding:30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:23px;
+}
+
+.welcome small { letter-spacing:2px; }
+.welcome h2 { font-size:26px; margin:12px 0; }
+.welcome p { font-size:12px; opacity:.85; }
+.welcome-icon { font-size:65px; }
+
+/* Statistics */
+
+.stats {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:25px;
+}
+
+.stat {
+    background:var(--card);
+    border:1px solid var(--border);
+    padding:20px;
+    border-radius:12px;
+}
+
+.stat-icon {
+    width:38px;
+    height:38px;
+    background:var(--light);
+    color:var(--primary);
+    display:grid;
+    place-items:center;
+    border-radius:9px;
+    font-size:19px;
+    margin-bottom:14px;
+}
+
+.stat p { color:var(--muted); font-size:12px; }
+.stat h2 { font-size:26px; margin:8px 0; }
+.stat small { color:var(--muted); font-size:10px; }
+
+/* Cards */
+
+.card {
+    background:var(--card);
+    border:1px solid var(--border);
+    padding:24px;
+    border-radius:12px;
+    margin-bottom:23px;
+}
+
+.heading {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.heading h2 { font-size:17px; }
+.heading p { color:var(--muted); font-size:11px; margin-top:6px; }
+
+/* Form */
+
+.form-grid {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.field { display:flex; flex-direction:column; gap:8px; }
+.field label { font-size:12px; font-weight:600; }
+
+.field input,.field select,.filters input,.filters select {
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--card);
+    color:var(--text);
+    outline:none;
+    font-size:12px;
+    width:100%;
+}
+
+.field input:focus,.field select:focus {
+    border-color:var(--primary);
+}
+
+.form-actions {
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:23px;
+}
+
+/* Search and Table */
+
+.filters {
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.filters input { max-width:350px; }
+.filters select { max-width:220px; }
+
+.table-wrap { overflow-x:auto; }
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    min-width:700px;
+}
+
+th {
+    background:var(--bg);
+    color:var(--muted);
+    text-align:left;
+    font-size:10px;
+    padding:15px 12px;
+}
+
+td {
+    border-bottom:1px solid var(--border);
+    padding:15px 12px;
+    font-size:12px;
+}
+
+.student {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.avatar {
+    width:35px;
+    height:35px;
+    background:var(--light);
+    color:var(--primary);
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-weight:700;
+}
+
+.student-name { font-weight:600; }
+.email { color:var(--muted); font-size:10px; margin-top:4px; }
+
+.tag {
+    background:var(--light);
+    color:var(--primary);
+    padding:6px 8px;
+    border-radius:5px;
+    font-size:10px;
+}
+
+.action-group { display:flex; gap:6px; }
+
+.action-btn {
+    padding:7px 9px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:5px;
+    font-size:11px;
+}
+
+.action-btn:hover { border-color:var(--primary); color:var(--primary); }
+.delete:hover { color:#e74c3c; border-color:#e74c3c; }
+
+.empty {
+    text-align:center;
+    padding:35px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.footer {
+    color:var(--muted);
+    font-size:11px;
+    text-align:center;
+    padding:20px;
+}
+
+.toast {
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    background:#20243a;
+    color:white;
+    padding:14px 20px;
+    border-radius:8px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+}
+
+.toast.show { opacity:1; }
+
+.hidden { display:none !important; }
+
+@media(max-width:1000px) {
+    .stats { grid-template-columns:repeat(2,1fr); }
+}
+
+@media(max-width:700px) {
+    .sidebar { width:65px; padding:20px 8px; }
+    .logo { justify-content:center; }
+    .logo span { display:none; }
+    .menu-title,.sidebar-bottom { display:none; }
+    .nav-link { text-align:center; font-size:0; padding:15px 5px; }
+    .nav-link::first-letter { font-size:18px; }
+    .main { margin-left:65px; width:calc(100% - 65px); padding:20px 12px; }
+    .topbar h1 { font-size:17px; }
+    .topbar p { font-size:10px; }
+    .actions { gap:5px; }
+    .actions .btn { padding:9px; font-size:10px; }
+    .welcome { padding:20px 15px; }
+    .welcome h2 { font-size:18px; }
+    .welcome-icon { font-size:35px; }
+    .stats { gap:9px; }
+    .stat { padding:12px; }
+    .stat h2 { font-size:21px; }
+    .card { padding:15px 11px; }
+    .form-grid { grid-template-columns:1fr; }
+    .filters { flex-direction:column; }
+    .filters input,.filters select { max-width:100%; }
+    .heading h2 { font-size:14px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">S</div>
+        <span>Student<span>Hub</span></span>
+    </div>
+
+    <p class="menu-title">MENU</p>
+
+    <nav>
+        <a href="#dashboard" class="nav-link active">▦ Dashboard</a>
+        <a href="#students" class="nav-link">♙ Students</a>
+        <a href="#registration" class="nav-link">＋ Add Student</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        STUDENT MANAGEMENT<br><br>
+        Version 1.0.0
+    </div>
+
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome back! Here's your overview.</p>
+        </div>
+
+        <div class="actions">
+            <button class="theme-btn" id="themeBtn">☾</button>
+            <button class="btn primary" onclick="openForm()">+ Add Student</button>
+        </div>
+    </header>
+
+    <section id="dashboard">
+
+        <div class="welcome">
+            <div>
+                <small>STUDENT MANAGEMENT SYSTEM</small>
+                <h2>Manage Your Students</h2>
+                <p>Keep all your student records organized in one place.</p>
+            </div>
+            <div class="welcome-icon">🎓</div>
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                <div class="stat-icon">♙</div>
+                <p>Total Students</p>
+                <h2 id="total">0</h2>
+                <small>Registered students</small>
+            </div>
+
+            <div class="stat">
+                <div class="stat-icon">✓</div>
+                <p>Active Students</p>
+                <h2 id="active">0</h2>
+                <small>Currently enrolled</small>
+            </div>
+
+            <div class="stat">
+                <div class="stat-icon">★</div>
+                <p>Average Marks</p>
+                <h2 id="average">0%</h2>
+                <small>Overall performance</small>
+            </div>
+
+            <div class="stat">
+                <div class="stat-icon">▤</div>
+                <p>Total Courses</p>
+                <h2 id="courses">0</h2>
+                <small>Available courses</small>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="card" id="registration">
+
+        <div class="heading">
+            <div>
+                <h2 id="formHeading">Add New Student</h2>
+                <p>Enter student information below.</p>
+            </div>
+        </div>
+
+        <form id="studentForm">
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Student ID *</label>
+                    <input id="sid" placeholder="STU101" required>
+                </div>
+
+                <div class="field">
+                    <label>Full Name *</label>
+                    <input id="name" placeholder="Enter full name" required>
+                </div>
+
+                <div class="field">
+                    <label>Email Address *</label>
+                    <input id="email" type="email" placeholder="student@example.com" required>
+                </div>
+
+                <div class="field">
+                    <label>Phone Number *</label>
+                    <input id="phone" type="tel" maxlength="10" pattern="[0-9]{10}" placeholder="10 digit number" required>
+                </div>
+
+                <div class="field">
+                    <label>Course *</label>
+                    <select id="course" required>
+                        <option value="">Select Course</option>
+                        <option>B.Tech AI & Data Science</option>
+                        <option>B.Tech Computer Science</option>
+                        <option>BCA</option>
+                        <option>MCA</option>
+                        <option>BBA</option>
+                        <option>B.Sc</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Marks (%) *</label>
+                    <input id="marks" type="number" min="0" max="100" step="0.01" placeholder="Enter marks" required>
+                </div>
+
+                <div class="field">
+                    <label>Enrollment Date *</label>
+                    <input id="date" type="date" required>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn secondary hidden" id="cancelBtn" onclick="resetForm()">Cancel</button>
+                <button type="submit" class="btn primary" id="submitBtn">Add Student</button>
+            </div>
+
+        </form>
+    </section>
+
+    <section class="card" id="students">
+
+        <div class="heading">
+            <div>
+                <h2>Student Records</h2>
+                <p>Manage and view all registered students.</p>
+            </div>
+            <button class="btn secondary" onclick="exportCSV()">↓ Export CSV</button>
+        </div>
+
+        <div class="filters">
+            <input type="search" id="search" placeholder="Search by name or ID...">
+
+            <select id="filter">
+                <option value="">All Courses</option>
+                <option>B.Tech AI & Data Science</option>
+                <option>B.Tech Computer Science</option>
+                <option>BCA</option>
+                <option>MCA</option>
+                <option>BBA</option>
+                <option>B.Sc</option>
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>STUDENT</th>
+                        <th>STUDENT ID</th>
+                        <th>COURSE</th>
+                        <th>MARKS</th>
+                        <th>ENROLLMENT</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+
+                <tbody id="studentTable"></tbody>
+            </table>
+        </div>
+
+        <div id="empty" class="empty hidden">
+            <h3>No students found</h3>
+            <p>Add a student or change your search filters.</p>
+        </div>
+
+        <p id="count" style="font-size:11px;color:var(--muted);margin-top:15px">
+            Showing 0 students
+        </p>
+
+    </section>
+
+    <footer class="footer">
+        StudentHub © 2026 | Student Management System
+    </footer>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// Load data from LocalStorage
+
+const KEY = "studentHubRecords";
+
+let students = JSON.parse(localStorage.getItem(KEY)) || [
+    {
+        id:"STU101",
+        name:"Rahul Sharma",
+        email:"rahul@example.com",
+        phone:"9876543210",
+        course:"B.Tech AI & Data Science",
+        marks:88,
+        date:"2026-01-10"
+    },
+    {
+        id:"STU102",
+        name:"Priya Singh",
+        email:"priya@example.com",
+        phone:"9876543211",
+        course:"B.Tech Computer Science",
+        marks:92,
+        date:"2026-02-15"
+    },
+    {
+        id:"STU103",
+        name:"Aman Verma",
+        email:"aman@example.com",
+        phone:"9876543212",
+        course:"BCA",
+        marks:76,
+        date:"2026-03-20"
+    }
+];
+
+let editingId = null;
+
+const $ = id => document.getElementById(id);
+
+function save() {
+    localStorage.setItem(KEY,JSON.stringify(students));
+}
+
+function notify(message) {
+    $("toast").textContent = message;
+    $("toast").classList.add("show");
+
+    setTimeout(() => {
+        $("toast").classList.remove("show");
+    },2500);
+}
+
+function safe(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+    })[char]);
+}
+
+// Dashboard statistics
+
+function updateStats() {
+
+    $("total").textContent = students.length;
+    $("active").textContent = students.length;
+
+    let avg = students.length
+        ? students.reduce((sum,s) => sum + Number(s.marks),0)/students.length
+        : 0;
+
+    $("average").textContent = avg.toFixed(1)+"%";
+
+    $("courses").textContent =
+        new Set(students.map(s => s.course)).size;
+}
+
+// Display student records
+
+function display() {
+
+    let search = $("search").value.toLowerCase().trim();
+    let filter = $("filter").value;
+
+    let list = students.filter(s => {
+        let matchSearch =
+            s.name.toLowerCase().includes(search) ||
+            s.id.toLowerCase().includes(search);
+
+        let matchCourse = !filter || s.course === filter;
+
+        return matchSearch && matchCourse;
+    });
+
+    $("studentTable").innerHTML = "";
+
+    list.forEach(s => {
+
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>
+                <div class="student">
+                    <div class="avatar">${safe(s.name.charAt(0).toUpperCase())}</div>
+                    <div>
+                        <div class="student-name">${safe(s.name)}</div>
+                        <div class="email">${safe(s.email)}</div>
+                    </div>
+                </div>
+            </td>
+
+            <td>${safe(s.id)}</td>
+            <td><span class="tag">${safe(s.course)}</span></td>
+            <td>${Number(s.marks).toFixed(1)}%</td>
+            <td>${safe(s.date)}</td>
+
+            <td>
+                <div class="action-group">
+                    <button class="action-btn" data-action="edit" data-id="${safe(s.id)}">Edit</button>
+                    <button class="action-btn delete" data-action="delete" data-id="${safe(s.id)}">Delete</button>
+                </div>
+            </td>
+        `;
+
+        $("studentTable").appendChild(row);
+    });
+
+    $("empty").classList.toggle("hidden",list.length !== 0);
+
+    $("count").textContent =
+        `Showing ${list.length} of ${students.length} students`;
+
+    updateStats();
+}
+
+// Add and update student
+
+$("studentForm").addEventListener("submit",function(e) {
+
+    e.preventDefault();
+
+    let id = $("sid").value.trim();
+    let name = $("name").value.trim();
+    let email = $("email").value.trim();
+    let phone = $("phone").value.trim();
+    let course = $("course").value;
+    let marks = Number($("marks").value);
+    let date = $("date").value;
+
+    if(!/^[A-Za-z0-9_-]+$/.test(id)) {
+        notify("Invalid student ID!");
+        return;
+    }
+
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        notify("Enter a valid email!");
+        return;
+    }
+
+    if(!/^[0-9]{10}$/.test(phone)) {
+        notify("Enter a valid 10-digit phone number!");
+        return;
+    }
+
+    if(!Number.isFinite(marks) || marks < 0 || marks > 100) {
+        notify("Marks must be between 0 and 100!");
+        return;
+    }
+
+    let duplicate = students.some(s =>
+        s.id.toLowerCase() === id.toLowerCase() &&
+        s.id !== editingId
+    );
+
+    if(duplicate) {
+        notify("Student ID already exists!");
+        return;
+    }
+
+    let data = {id,name,email,phone,course,marks,date};
+
+    if(editingId !== null) {
+
+        let index = students.findIndex(s => s.id === editingId);
+
+        if(index !== -1) {
+            students[index] = data;
+        }
+
+        editingId = null;
+        notify("Student updated successfully!");
+
+    } else {
+
+        students.push(data);
+        notify("Student added successfully!");
+    }
+
+    save();
+    resetForm();
+    display();
+});
+
+// Edit student
+
+function editStudent(id) {
+
+    let s = students.find(s => s.id === id);
+    if(!s) return;
+
+    editingId = id;
+
+    $("sid").value = s.id;
+    $("sid").disabled = true;
+    $("name").value = s.name;
+    $("email").value = s.email;
+    $("phone").value = s.phone;
+    $("course").value = s.course;
+    $("marks").value = s.marks;
+    $("date").value = s.date;
+
+    $("formHeading").textContent = "Update Student";
+    $("submitBtn").textContent = "Save Changes";
+    $("cancelBtn").classList.remove("hidden");
+
+    $("registration").scrollIntoView({behavior:"smooth"});
+}
+
+// Delete student
+
+function deleteStudent(id) {
+
+    if(!confirm("Are you sure you want to delete this student?")) return;
+
+    students = students.filter(s => s.id !== id);
+
+    if(editingId === id) resetForm();
+
+    save();
+    display();
+    notify("Student deleted successfully!");
+}
+
+// Table actions
+
+$("studentTable").addEventListener("click",function(e) {
+
+    let button = e.target.closest("button[data-action]");
+    if(!button) return;
+
+    let id = button.dataset.id;
+
+    if(button.dataset.action === "edit") {
+        editStudent(id);
+    } else {
+        deleteStudent(id);
+    }
+});
+
+// Reset form
+
+function resetForm() {
+
+    $("studentForm").reset();
+    editingId = null;
+
+    $("sid").disabled = false;
+    $("formHeading").textContent = "Add New Student";
+    $("submitBtn").textContent = "Add Student";
+    $("cancelBtn").classList.add("hidden");
+}
+
+function openForm() {
+    resetForm();
+    $("registration").scrollIntoView({behavior:"smooth"});
+}
+
+// Search and filter
+
+$("search").addEventListener("input",display);
+$("filter").addEventListener("change",display);
+
+// Dark and light mode
+
+if(localStorage.getItem("studentHubTheme") === "dark") {
+    document.body.classList.add("dark");
+    $("themeBtn").textContent = "☀";
+}
+
+$("themeBtn").addEventListener("click",function() {
+
+    document.body.classList.toggle("dark");
+
+    let dark = document.body.classList.contains("dark");
+
+    $("themeBtn").textContent = dark ? "☀" : "☾";
+
+    localStorage.setItem("studentHubTheme",dark ? "dark" : "light");
+});
+
+// Export CSV
+
+function exportCSV() {
+
+    if(students.length === 0) {
+        notify("No records to export!");
+        return;
+    }
+
+    let headers = ["ID","Name","Email","Phone","Course","Marks","Date"];
+
+    let rows = students.map(s => [
+        s.id,s.name,s.email,s.phone,s.course,s.marks,s.date
+    ]);
+
+    let csv = [headers,...rows].map(row =>
+        row.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(",")
+    ).join("\n");
+
+    let blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+
+    let url = URL.createObjectURL(blob);
+    let link = document.createElement("a");
+
+    link.href = url;
+    link.download = "student-records.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    notify("CSV exported successfully!");
+}
+
+document.querySelectorAll(".nav-link").forEach(link => {
+
+    link.addEventListener("click",function() {
+
+        document.querySelectorAll(".nav-link").forEach(item =>
+            item.classList.remove("active")
+        );
+
+        this.classList.add("active");
+    });
+});
+
+// Start application
+
+save();
+display();
+
+</script>
+
+</body>
+</html>
